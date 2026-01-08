@@ -39,7 +39,7 @@ public class EmployeeController {
     }
 
     //RequestParam, not strictly mandatory, when required=false
-    @GetMapping(path = "/pathVar")
+    @GetMapping(path = "/all")
     public List<EmployeeDTO> getAllEmployees(@RequestParam(required = false) Integer age,
                                           @RequestParam(required = false, name="sort") String sortBy){
 //        return "Hi customer "+age+" "+sortBy;
@@ -61,6 +61,16 @@ public class EmployeeController {
 
         return empService.createNewEmployee(inputEmployee);
 
+    }
+
+    @PutMapping(path="/{empId}")
+    public EmployeeDTO updateEmployeeById(@RequestBody EmployeeDTO employeeDTO,@PathVariable Long empId){
+        return empService.updateEmployeeById(employeeDTO,empId);
+    }
+
+    @DeleteMapping(path="/{empId}")
+    public boolean deleteEmployeeById(@PathVariable Long empId){
+        return empService.deleteEmployeeById(empId);
     }
 
 }

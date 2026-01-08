@@ -58,4 +58,25 @@ public class EmployeeService {
         //returning EmployeeDTO using modelMapper
         return modelMapper.map(savedEmployee,EmployeeDTO.class);
     }
+
+    public EmployeeDTO updateEmployeeById(EmployeeDTO employeeDTO, Long empId) {
+        EmployeeEntity employee = modelMapper.map(employeeDTO,EmployeeEntity.class);
+        //update the id, as we are finding by id, and updating other details
+        employee.setId(empId);
+        //if found, it will update else create new employee
+        EmployeeEntity savedEmployeeEntity = empRep.save(employee);
+        return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
+
+    }
+
+    public boolean deleteEmployeeById(Long empId) {
+        boolean exists = empRep.existsById(empId);
+
+        if(exists) {
+            empRep.deleteById(empId);
+            return true;
+        }
+
+        return false;
+    }
 }
