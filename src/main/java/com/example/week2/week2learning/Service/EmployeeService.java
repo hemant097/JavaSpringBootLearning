@@ -76,7 +76,7 @@ public class EmployeeService {
             empRep.deleteById(empId);
             return true;
         }
-
+        //only acts when above condition doesn't enacts
         return false;
     }
 }
