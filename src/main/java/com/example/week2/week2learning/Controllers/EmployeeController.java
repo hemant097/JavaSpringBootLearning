@@ -5,12 +5,16 @@ import com.example.week2.week2learning.DTO.EmployeeDTO;
 import com.example.week2.week2learning.Entity.EmployeeEntity;
 import com.example.week2.week2learning.Repository.EmployeeRepository;
 import com.example.week2.week2learning.Service.EmployeeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/employees" )
@@ -31,12 +35,17 @@ public class EmployeeController {
 
     //Path Variable, strictly mandatory
     @GetMapping(path = "/{empId}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long empId){
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long empId){
 
 //        return new EmployeeDTO(empId,"Hemant","abx@example.com",27,LocalDate.now(),true);
 
-        return empService.getEmployeeById(empId);
-
+        Optional<EmployeeDTO> employeeDTO = empService.getEmployeeById(empId);
+        if(employeeDTO.isEmpty())
+            return ResponseEntity.notFound().build();
+        else
+           return ResponseEntity.ok(employeeDTO.get()); // PREFERRED
+        //        return ResponseEntity.status(404).body(employeeDTO);  //should AVOID, as explicit status codes are prone to mistakes
+        //          return ResponseEntity.status(HttpStatus.OK).body(employeeDTO); // is FINE
     }
 
     //RequestParam, not strictly mandatory, when required=false

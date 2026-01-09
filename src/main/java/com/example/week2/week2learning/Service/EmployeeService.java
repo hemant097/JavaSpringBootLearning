@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,12 +26,23 @@ public class EmployeeService {
         this.modelMapper =modelMapper;
     }
 
-    public EmployeeDTO getEmployeeById(Long empId) {
-        EmployeeEntity employeeEntity =  empRep.findById(empId).orElse(null);
+    public Optional<EmployeeDTO> getEmployeeById(Long empId) {
+        Optional<EmployeeEntity> employeeEntity =  empRep.findById(empId);
 
         //ModelMapper using creating its object
         ModelMapper mapper = new ModelMapper();
-        return mapper.map(employeeEntity,EmployeeDTO.class);
+
+        //without using Optional.map()
+//        if(employeeEntity.isPresent()){
+//            EmployeeEntity ee = employeeEntity.get();
+//            EmployeeDTO dto = modelMapper.map(ee,EmployeeDTO.class);
+//            return Optional.of(dto);
+//        }
+//        else
+//            return Optional.empty();
+
+        //Optional map() only executes the lambda if a value is present, else returns Optional.empty()
+        return employeeEntity.map(emp1 -> mapper.map(emp1,EmployeeDTO.class));
     }
 
     public List<EmployeeDTO> getAllEmployees() {
