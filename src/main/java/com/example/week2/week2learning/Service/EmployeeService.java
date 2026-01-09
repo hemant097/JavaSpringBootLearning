@@ -76,11 +76,18 @@ public class EmployeeService {
 
     public EmployeeDTO updateEmployeeById(EmployeeDTO employeeDTO, Long empId) {
         EmployeeEntity employee = modelMapper.map(employeeDTO,EmployeeEntity.class);
-        //update the id, as we are finding by id, and updating other details
-        employee.setId(empId);
-        //if found, it will update else create new employee
-        EmployeeEntity savedEmployeeEntity = empRep.save(employee);
-        return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
+
+        if(whetherEmployeeExists(empId)) {
+            employee.setId(empId);
+            EmployeeEntity savedEmployeeEntity = empRep.save(employee);
+            return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
+        }
+        else {
+            return modelMapper.map(empRep.save(employee),EmployeeDTO.class);
+        }
+
+
+
 
     }
 
@@ -103,7 +110,7 @@ public class EmployeeService {
         if(!exists) return null;
         EmployeeEntity employeeEntity = empRep.findById(empId).get();
 
-        //using reflection, picking each filed matching from updates, and setting accessibility to public
+        //using reflection, picking each field matching from updates, and setting accessibility to public
         updates.forEach((field,value)->{
             Field fieldToBeUpdated = ReflectionUtils.findField(EmployeeEntity.class,field);
             fieldToBeUpdated.setAccessible(true);

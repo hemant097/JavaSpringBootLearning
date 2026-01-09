@@ -51,43 +51,54 @@ public class EmployeeController {
 
     //RequestParam, not strictly mandatory, when required=false
     @GetMapping(path = "/all")
-    public List<EmployeeDTO> getAllEmployees(@RequestParam(required = false) Integer age,
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@RequestParam(required = false) Integer age,
                                           @RequestParam(required = false, name="sort") String sortBy){
-//        return "Hi customer "+age+" "+sortBy;
 
-        return empService.getAllEmployees();
+        return ResponseEntity.ok(empService.getAllEmployees());
 
     }
 
-//    @PostMapping
-//    public String createNewEmployee(){
-//        return "Hello from POST method";
-//    }
-
     //conversion of java objects into JSON, is done by jackson automatically
     @PostMapping
-    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
-//        inputEmployee.setId(100L);
-//        return inputEmployee;
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
 
-        return empService.createNewEmployee(inputEmployee);
+        EmployeeDTO employeeDTO = empService.createNewEmployee(inputEmployee);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header("successful", "successfully created")
+                .body(employeeDTO);
 
     }
 
     @PutMapping(path="/{empId}")
-    public EmployeeDTO updateEmployeeById(@RequestBody EmployeeDTO employeeDTO,@PathVariable Long empId){
-        return empService.updateEmployeeById(employeeDTO,empId);
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO,@PathVariable Long empId){
+
+        EmployeeDTO updateEmployeeById =  empService.updateEmployeeById(employeeDTO,empId);
+        return  ResponseEntity.ok(updateEmployeeById);
     }
 
     @DeleteMapping(path="/{empId}")
-    public boolean deleteEmployeeById(@PathVariable Long empId){
-        return empService.deleteEmployeeById(empId);
+    public ResponseEntity<Boolean> deleteEmployeeById(@PathVariable Long empId){
+
+        boolean deleted =  empService.deleteEmployeeById(empId);
+
+        if(deleted)
+            return ResponseEntity.ok(true);
+        else
+            return ResponseEntity.notFound()
+                                 .header("errorReason","id not in DB")
+                                 .build();
+
     }
 
     @PatchMapping(path="/{empId}")
-    public EmployeeDTO updatePartialEmployee(@PathVariable Long empId,
+    public ResponseEntity<EmployeeDTO> updatePartialEmployee(@PathVariable Long empId,
                                              @RequestBody Map<String,Object> updates){
-        return empService.updatePartialEmployee(empId,updates);
+        EmployeeDTO employeeDTO =  empService.updatePartialEmployee(empId,updates);
+        if(employeeDTO==null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(employeeDTO);
     }
 
 }
