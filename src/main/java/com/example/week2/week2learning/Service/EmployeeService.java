@@ -5,9 +5,12 @@ import com.example.week2.week2learning.Entity.EmployeeEntity;
 import com.example.week2.week2learning.Repository.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,14 +72,40 @@ public class EmployeeService {
 
     }
 
-    public boolean deleteEmployeeById(Long empId) {
-        boolean exists = empRep.existsById(empId);
+    public boolean whetherEmployeeExists(Long empId){
+       return empRep.existsById(empId);
+    }
 
+    public boolean deleteEmployeeById(Long empId) {
+        boolean exists = whetherEmployeeExists(empId);
         if(exists) {
             empRep.deleteById(empId);
             return true;
         }
-        //only acts when above condition doesn't enacts
+        //only acts when above condition doesn't enact
         return false;
+    }
+
+    public EmployeeDTO updatePartialEmployee(Long empId, Map<String, Object> updates) {
+        boolean exists = whetherEmployeeExists(empId);
+        if(!exists) return null;
+        EmployeeEntity employeeEntity = empRep.findById(empId).get();
+
+        //using reflection, picking each filed matching from updates, and setting accessibility to public
+        updates.forEach((field,value)->{
+            Field fieldToBeUpdated = ReflectionUtils.findField(EmployeeEntity.class,field);
+            fieldToBeUpdated.setAccessible(true);
+            //modifying the field of employeeEntity using the fieldToBeUpdated, and value from updates
+            ReflectionUtils.setField(fieldToBeUpdated,employeeEntity,value);
+        });
+
+//        EmployeeEntity updatedEmployee = empRep.save(employeeEntity);
+//        return modelMapper.map(updatedEmployee,EmployeeDTO.class);
+
+        //same as above 2 commented lines
+        return modelMapper.map(empRep.save(employeeEntity),EmployeeDTO.class);
+
+
+
     }
 }
