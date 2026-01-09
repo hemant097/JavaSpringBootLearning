@@ -37,15 +37,16 @@ public class EmployeeController {
     @GetMapping(path = "/{empId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long empId){
 
-//        return new EmployeeDTO(empId,"Hemant","abx@example.com",27,LocalDate.now(),true);
-
         Optional<EmployeeDTO> employeeDTO = empService.getEmployeeById(empId);
-        if(employeeDTO.isEmpty())
-            return ResponseEntity.notFound().build();
-        else
-           return ResponseEntity.ok(employeeDTO.get()); // PREFERRED
-        //        return ResponseEntity.status(404).body(employeeDTO);  //should AVOID, as explicit status codes are prone to mistakes
-        //          return ResponseEntity.status(HttpStatus.OK).body(employeeDTO); // is FINE
+
+        return employeeDTO
+                .map(edto -> ResponseEntity.ok(edto) )
+                .orElse(ResponseEntity.notFound()
+                        .header("errorReason", "Absent in DB")
+                        .build());
+
+        //the above line translates to, if employee dto is not null, send 200 OK, or else create a response with
+        //a header(which is optional) and build then return. We can see this response in http response headers in postman
     }
 
     //RequestParam, not strictly mandatory, when required=false
