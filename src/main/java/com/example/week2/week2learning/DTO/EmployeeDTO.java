@@ -1,5 +1,6 @@
 package com.example.week2.week2learning.DTO;
 
+import com.example.week2.week2learning.Annotations.EmployeeRoleValidation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +33,8 @@ public class EmployeeDTO {
     @PastOrPresent
     private LocalDate dateOfJoining;
 
-    @Pattern(regexp = "^(ADMIN|USER)$")
+//    @Pattern(regexp = "^(ADMIN|USER)$")
+    @EmployeeRoleValidation(message = "role can only be ADMIN or USER")
     @NotBlank(message = "role of the employee cannot be blank")
     private String role;
 
