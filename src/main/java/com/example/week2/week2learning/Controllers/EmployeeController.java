@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -40,12 +41,9 @@ public class EmployeeController {
 
         return employeeDTO
                 .map(edto -> ResponseEntity.ok(edto) )
-                .orElse(ResponseEntity.notFound()
-                        .header("errorReason", "Absent in DB")
-                        .build());
+                .orElseThrow( () -> new NoSuchElementException("employee not found"));
 
-        //the above line translates to, if employee dto is not null, send 200 OK, or else create a response with
-        //a header(which is optional) and build then return. We can see this response in http response headers in postman
+        //now we need to throw exception only, Exception handler will manage the HttpStatus
     }
 
     //RequestParam, not strictly mandatory, when required=false
