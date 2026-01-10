@@ -2,8 +2,6 @@ package com.example.week2.week2learning.Controllers;
 
 
 import com.example.week2.week2learning.DTO.EmployeeDTO;
-import com.example.week2.week2learning.Entity.EmployeeEntity;
-import com.example.week2.week2learning.Repository.EmployeeRepository;
 import com.example.week2.week2learning.Service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
