@@ -5,6 +5,7 @@ import com.example.week2.week2learning.DTO.EmployeeDTO;
 import com.example.week2.week2learning.Entity.EmployeeEntity;
 import com.example.week2.week2learning.Repository.EmployeeRepository;
 import com.example.week2.week2learning.Service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +61,7 @@ public class EmployeeController {
 
     //conversion of java objects into JSON, is done by jackson automatically
     @PostMapping
-    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody @Valid EmployeeDTO inputEmployee){
 
         EmployeeDTO employeeDTO = empService.createNewEmployee(inputEmployee);
 
@@ -71,7 +72,8 @@ public class EmployeeController {
     }
 
     @PutMapping(path="/{empId}")
-    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO,@PathVariable Long empId){
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO,
+                                                          @PathVariable Long empId){
 
         EmployeeDTO updateEmployeeById =  empService.updateEmployeeById(employeeDTO,empId);
         return  ResponseEntity.ok(updateEmployeeById);

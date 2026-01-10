@@ -1,10 +1,7 @@
 package com.example.week2.week2learning.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -12,6 +9,8 @@ import java.time.LocalDate;
 @Table(name="employees")// when we want to have table name different from entity class
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeeEntity {
 
     @Id
@@ -22,6 +21,8 @@ public class EmployeeEntity {
     private Integer age;
     private LocalDate dateOfJoining;
     private Boolean incumbent;
+    private Double salary;
+    private String role;
 
 
 }
