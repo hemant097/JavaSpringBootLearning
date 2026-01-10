@@ -2,6 +2,7 @@ package com.example.week2.week2learning.Controllers;
 
 
 import com.example.week2.week2learning.DTO.EmployeeDTO;
+import com.example.week2.week2learning.Exceptions.ResourceNotFoundException;
 import com.example.week2.week2learning.Service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -41,9 +42,9 @@ public class EmployeeController {
 
         return employeeDTO
                 .map(edto -> ResponseEntity.ok(edto) )
-                .orElseThrow( () -> new NoSuchElementException("employee not found"));
+                .orElseThrow( () -> new ResourceNotFoundException("employee not found"));
 
-        //now we need to throw exception only, Exception handler will manage the HttpStatus
+        //now we need to throw exception only, Exception handler will manage the HttpStatus via MyCustomError
     }
 
     //RequestParam, not strictly mandatory, when required=false
