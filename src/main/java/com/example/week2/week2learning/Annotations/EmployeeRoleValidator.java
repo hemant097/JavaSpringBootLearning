@@ -5,7 +5,6 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.List;
 
-//constraint validator needs to be implemented
 public class EmployeeRoleValidator implements ConstraintValidator<EmployeeRoleValidation,String> {
 
 
