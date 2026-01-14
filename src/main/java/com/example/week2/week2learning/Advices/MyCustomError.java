@@ -10,5 +10,5 @@ import org.springframework.http.HttpStatus;
 public class MyCustomError {
     private  HttpStatus httpStatus;
     private  String message;
-    private  String localDateTime;
+    private  String errorRecordedTime;
 }
