@@ -1,15 +1,14 @@
 package com.example.week2.week2learning.Advices;
 
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
-
-@Data
+@Builder
+@Getter
 public class MyCustomError {
-
-    private final HttpStatus httpStatus;
-    private final String string;
-    private final String localDateTime;
+    private  HttpStatus httpStatus;
+    private  String message;
+    private  String localDateTime;
 }

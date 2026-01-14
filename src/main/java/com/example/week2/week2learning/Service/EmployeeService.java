@@ -2,6 +2,7 @@ package com.example.week2.week2learning.Service;
 
 import com.example.week2.week2learning.DTO.EmployeeDTO;
 import com.example.week2.week2learning.Entity.EmployeeEntity;
+import com.example.week2.week2learning.Exceptions.ResourceNotFoundException;
 import com.example.week2.week2learning.Repository.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class EmployeeService {
     }
 
     public Optional<EmployeeDTO> getEmployeeById(Long empId) {
+
         Optional<EmployeeEntity> employeeEntity =  empRep.findById(empId);
 
         //ModelMapper using creating its object
@@ -74,39 +76,35 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(EmployeeDTO employeeDTO, Long empId) {
+
+        whetherEmployeeExists(empId);
+
         EmployeeEntity employee = modelMapper.map(employeeDTO,EmployeeEntity.class);
-
-        if(whetherEmployeeExists(empId)) {
-            employee.setId(empId);
-            EmployeeEntity savedEmployeeEntity = empRep.save(employee);
-            return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
-        }
-        else {
-            return modelMapper.map(empRep.save(employee),EmployeeDTO.class);
-        }
-
-
-
+        employee.setId(empId);
+        EmployeeEntity savedEmployeeEntity = empRep.save(employee);
+        return modelMapper.map(savedEmployeeEntity,EmployeeDTO.class);
 
     }
 
-    public boolean whetherEmployeeExists(Long empId){
-       return empRep.existsById(empId);
+    public void whetherEmployeeExists(Long empId){
+       boolean exists =  empRep.existsById(empId);
+
+       if(!exists)
+           throw new ResourceNotFoundException("this employee does not exist with id "+empId);
+
     }
 
     public boolean deleteEmployeeById(Long empId) {
-        boolean exists = whetherEmployeeExists(empId);
-        if(exists) {
+       whetherEmployeeExists(empId);
+
             empRep.deleteById(empId);
             return true;
-        }
-        //only acts when above condition doesn't enact
-        return false;
+
     }
 
     public EmployeeDTO updatePartialEmployee(Long empId, Map<String, Object> updates) {
-        boolean exists = whetherEmployeeExists(empId);
-        if(!exists) return null;
+        whetherEmployeeExists(empId);
+
         EmployeeEntity employeeEntity = empRep.findById(empId).get();
 
         //using reflection, picking each field matching from updates, and setting accessibility to public

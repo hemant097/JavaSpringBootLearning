@@ -42,7 +42,7 @@ public class EmployeeController {
 
         return employeeDTO
                 .map(edto -> ResponseEntity.ok(edto) )
-                .orElseThrow( () -> new ResourceNotFoundException("employee not found"));
+                .orElseThrow( () -> new ResourceNotFoundException("employee not found with id "+empId));
 
         //now we need to throw exception only, Exception handler will manage the HttpStatus via MyCustomError
     }

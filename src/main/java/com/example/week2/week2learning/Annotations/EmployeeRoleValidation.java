@@ -2,7 +2,6 @@ package com.example.week2.week2learning.Annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,5 +17,4 @@ public @interface EmployeeRoleValidation {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }
