@@ -16,17 +16,21 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<MyCustomError> resourceNotFound(ResourceNotFoundException rnfe) {
+    public ResponseEntity<APIError> resourceNotFound(ResourceNotFoundException rnfe) {
 
         String dateAndTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm"));
         //using lombok package private constructor
-        MyCustomError myCustomError = new MyCustomError(HttpStatus.NOT_FOUND,rnfe.getMessage(),dateAndTime );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(myCustomError);
+        APIError apiError = APIError.builder()
+                .message(rnfe.getMessage())
+                .httpStatus(HttpStatus.NOT_FOUND)
+                .errorRecordedTime(dateAndTime)
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
 
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MyCustomError> internalServerError(MethodArgumentNotValidException manve) {
+    public ResponseEntity<APIError> internalServerError(MethodArgumentNotValidException manve) {
 
         //getting all the binding errors from the exception and converting it to List<String> using stream
         List<String> errorList = manve.getBindingResult()
@@ -36,25 +40,26 @@ public class GlobalExceptionHandler {
 
         String dateAndTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm"));
         //using lombok builder
-        MyCustomError myCustomError = MyCustomError.builder()
-                .message(errorList.toString())
+        APIError apiError = APIError.builder()
+                .message("Input validation failed")
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .errorRecordedTime(dateAndTime)
+                .subErrors(errorList)
                 .build();
-        return new ResponseEntity<>(myCustomError, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MyCustomError> internalServerError(Exception exception) {
+    public ResponseEntity<APIError> internalServerError(Exception exception) {
 
         String dateAndTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm"));
         //using lombok builder
-        MyCustomError myCustomError = MyCustomError.builder()
+        APIError apiError = APIError.builder()
                 .message(exception.getMessage())
                 .errorRecordedTime(dateAndTime)
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
 
-        return new ResponseEntity<>(myCustomError, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
